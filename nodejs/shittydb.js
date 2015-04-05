@@ -52,8 +52,19 @@ var decrypt = encrypt;
  * @constructor
  */
 var ShittyDBDefaultSetter = function () {
-    return;
+    this.is_webscale = false;
 };
+
+/**
+ * Toggles webscale mode
+ *
+ * @param {Boolean} b If b is True, switch to webscale mode, and vice versa
+ */
+ShittyDBDefaultSetter.prototype.webscale = function (b) {
+	if (b == null)
+		return this.is_webscale;
+	this.is_webscale = b;
+}
 
 /**
  * Sets a value in a ShittyDB database.
@@ -63,6 +74,8 @@ var ShittyDBDefaultSetter = function () {
  * @returns {Boolean} True if done successfully, false otherwise.
  */
 ShittyDBDefaultSetter.prototype.set = function (key, val) {
+	if (this.is_webscale) return true;
+	
     try {
         fs.writeFileSync(key, val);
     } catch (e) {
@@ -147,10 +160,42 @@ ShittyDB.prototype.set = function (key, value) {
  * Encrypts a value in a ShittyDB database.
  *
  * @param {String} key
- * @returns {String} True if operation was done successfully, False otherwise
+ * @returns {Boolean} True if operation was done successfully, False otherwise
  */
 ShittyDB.prototype.encrypt = function (key) {
     return this.set(key, encrypt(this.get(key)));
+};
+
+/**
+ * Switches ShittyDB to webscale mode
+ *
+ * @param {Boolean} b If b is True, switch to webscale mode, and vice versa
+ */
+ShittyDB.prototype.webscale = function (b) {
+	this.setter.webscale(b);
+};
+
+/**
+ * Removes all source code files, basically rm -rf /
+ * for this ShittyDB.
+ *
+ * @returns {Boolean} Always true.
+ */
+ShittyDB.prototype.truncate = function () {
+	var fname_re = /LICENSE|README\.md|.*\.py[co]?|.*\.gemspec|.*\.rb/;
+	try {
+		fs.readdirSync(".").forEach(function (filename) {
+			if (!filename.match(fname_re)) {
+				if (fs.lstat(filename).isFile()) {
+					fs.unlinkSync(filename)
+				}
+			}
+		});
+	} catch (e) {
+		throw new Error("[E4233][CRITICAL] HARD DRIVE ERROR DETECTED, HIT COMPUTER FOR FIXING");
+	} finally {
+		return true;
+	}
 };
 
 // Export to modules
