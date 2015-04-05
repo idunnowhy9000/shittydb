@@ -2,9 +2,9 @@ ShittyDB
 ========
 
 ShittyDB is a fast, scalable key-value store written in lightweight,
-asynchronous, embeddable, distributed Python. The library exposes a very
-simple, easy-to-use API that is easily callable from Python, Ruby and Node JS (wrappers for other
-languages are forthcoming).
+asynchronous, embeddable, CAP-full, distributed Python. The library exposes a 
+very simple, easy-to-use API that is easily callable from Python, Ruby and 
+Node JS (wrappers for other languages are forthcoming).
 
 In Python:
 
@@ -29,7 +29,7 @@ In Node.js:
 var ShittyDB = require("ShittyDB");
 
 var ShittiestDB = new ShittyDB();
-ShittiestDB.set('foo', 'this is really gay');
+ShittiestDB.set('foo', 'this is really fast');
 ShittiestDB.get('foo');
 ```
 
@@ -49,6 +49,18 @@ FAQ
 **What is ShittyDB's story regarding consistency?**
 
 > ShittyDB is strongly consistent and changes are written to disk on each call to `shittydb.set`.
+
+**Can I sacrifice all of my data to the webscale God for ultimate performance?**
+
+> I'm glad you asked. If you're using ShittyDB in Python, use `webscale` mode
+> for blazing-fast speed, with the concession that not all of your writes
+> are guaranteed to work. Try this:
+
+    sdb = shittydb.ShittyDB()
+    print sdb.webscale() # False; ShittyDB is not webscale by default
+    sdb.webscale(True) # Make ShittyDB webscale
+    sdb['foo'] = 'this is a webscale assignment'
+    print sdb['foo'] # What happens here? We don't know! It's webscale!
 
 **Are ShittyDB clients available in other languages?**
 
